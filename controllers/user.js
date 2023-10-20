@@ -7,7 +7,7 @@ exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //hacher le pwd, req.body.pwd pour récup le pwd du user et le salt: 10 tours de l'algo pour sécure le pwd. Plus c'est bien mais prend plus de temps
         .then(hash => {
             const user = new User({
-                email: req.bodey.mail, //mail du corps de la requête
+                email: req.body.mail, //mail du corps de la requête
                 password: hash
             });
             user.save()
@@ -16,6 +16,7 @@ exports.signup = (req, res, next) => {
         })
         .catch(error => res.status(500).json({ error }));
 };
+
 
 exports.login = (req, res, next) => {
     User.findOne({email: req.body.email})  //req.body.something = valeur donnée par le client

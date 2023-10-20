@@ -9,7 +9,9 @@ module.exports = (req, res, next) => {
         req.auth = {
             userId: userId
         };
+        next();
     } catch(error){
         res.status(401).json({ error });
     }
-};
+    
+};console.log();
