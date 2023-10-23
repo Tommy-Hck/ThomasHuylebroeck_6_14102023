@@ -18,6 +18,7 @@ const normalizePort = val => {
     }
     return false;
   };
+  console.log(process.env.PORT);
   const port = normalizePort(process.env.PORT || '3000'); //la fonction normalizePort renvoie un port valide, qu'il soit fourni sous la forme d'un numéro ou d'une chaîne 
   app.set('port', port);
   
@@ -31,17 +32,17 @@ const normalizePort = val => {
       case 'EACCES':
         console.error(bind + ' requires elevated privileges.');
         process.exit(1);
-        //break;
+        break;
       case 'EADDRINUSE':
         console.error(bind + ' is already in use.');
         process.exit(1);
-        //break;
+        break;
       default:
         throw error;
     }
   };
 
-  const server = http.createServer(app);
+const server = http.createServer(app);
 
 server.on('error', errorHandler);
 server.on('listening', () => {

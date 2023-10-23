@@ -11,7 +11,6 @@ const sauceRoutes = require('./routes/sauce'); //déco
 const userRoutes = require('./routes/user');
 
 
-
 mongoose.connect('mongodb+srv://Sirius:RZDqtOVgH9ptgx5b@cluster0.cnlgijl.mongodb.net/?retryWrites=true&w=majority&appName=AtlasApp',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -22,6 +21,8 @@ mongoose.connect('mongodb+srv://Sirius:RZDqtOVgH9ptgx5b@cluster0.cnlgijl.mongodb
 
 //créer une application express
 const app = express();
+
+
 
 app.use(express.json()); //Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
 
@@ -36,7 +37,7 @@ app.use((req, res, next) => {  //Le CORS définit comment les serveurs et les na
 //                                                              ----------LES ROUTES---------
 
 //déco
-app.use('/api/sauce', sauceRoutes); // ici, on importe sauceRoutes pour récup les routes app.get etc. du fichier sauce pour éviter de surcharger app.js. C'est module.exports = router qui permet de l'envoyer
+app.use('/api/sauces', sauceRoutes); // ici, on importe sauceRoutes pour récup les routes app.get etc. du fichier sauce pour éviter de surcharger app.js. C'est module.exports = router qui permet de l'envoyer
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 //exporter l'application pour y accéder depuis les autres fichiers du projet

@@ -1,20 +1,36 @@
 const bcrypt = require('bcrypt');
 const jwt = require ('jsonwebtoken');
-
 const User = require('../models/User');
 
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10) //hacher le pwd, req.body.pwd pour récup le pwd du user et le salt: 10 tours de l'algo pour sécure le pwd. Plus c'est bien mais prend plus de temps
         .then(hash => {
+            console.log("Mot de passe haché avec succès.");
             const user = new User({
-                email: req.body.mail, //mail du corps de la requête
+                email: req.body.email, //mail du corps de la requête
                 password: hash
             });
-            user.save()
-                .then(() => res.status(201).json({message: 'utilisateur crée'}))
-                .catch(error => res.status(400).json({ error }));
-        })
-        .catch(error => res.status(500).json({ error }));
+//             user.save()
+//                 .then(() => res.status(201).json({message: 'utilisateur crée'}))
+//                 .catch(error => res.status(400).json({ error }));
+//         })
+        
+//         .catch(error => res.status(500).json({ error }));
+// };
+user.save()
+.then(() => {
+    console.log("Utilisateur enregistré avec succès.");
+    res.status(201).json({ message: 'Utilisateur créé' });
+})
+.catch(error => {
+    console.error("Erreur lors de l'enregistrement de l'utilisateur:", error); // Ajoutez un log pour les erreurs d'enregistrement
+    res.status(400).json({ error });
+});
+})
+.catch(error => {
+console.error("Erreur lors du hachage du mot de passe:", error); // Ajoutez un log pour les erreurs de hachage
+res.status(500).json({ error });
+});
 };
 
 
