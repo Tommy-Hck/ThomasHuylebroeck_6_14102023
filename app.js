@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 // importer express
 const express = require ('express');
 
+require('dotenv').config();
+
 const path = require ('path');
 //importer mon schema
 //const Thing = require('./Thing');
