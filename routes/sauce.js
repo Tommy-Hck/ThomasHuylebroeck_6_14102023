@@ -9,9 +9,8 @@ const sauceCtrl = require('../controllers/sauce'); //sauceCtrl = le fichier sauc
 //gestion des routes
 router.get('/', auth, sauceCtrl.getAllSauces); //appeler l'authentification en PREMIER sinon ne fonctionne pas
 router.post('/', auth, multer, sauceCtrl.createSauce); //(req, res, next) =>{               //Ici on utilise la méthode post et on va chercher le middleware createSauce de la page sauce du dos controller
-router.put('/:id', auth, sauceCtrl.modifySauce);
+router.put('/:id', auth, multer, sauceCtrl.modifySauce);
 router.get('/:id', auth, sauceCtrl.getOneSauce);
-// router.get('/', auth, sauceCtrl.getAllSauces);
 router.delete('/:id', auth, sauceCtrl.deleteSauce);
 
 module.exports = router;

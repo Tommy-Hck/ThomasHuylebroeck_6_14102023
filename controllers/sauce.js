@@ -18,22 +18,47 @@ exports.createSauce = (req, res, next) => {
       .then(() => { res.status(201).json({ message: 'Sauce enregistrée' }) })
       .catch(error => {
         console.log(error);
-         res.status(400).json({ error }) })
+        res.status(400).json({ error })
+      })
   } catch (error) {
     console.error(error);
   }
 };
 
 
-exports.modifySauce = (req, res, next) => {
-  try{
-  const sauceObject = JSON.parse(req.body.sauce);
-  SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) //A REVOIR AVEC STEPHANE 
-    .then(() => res.status(200).json({ message: 'sauce modifiée' }))
-  } catch (error){
+exports.modifySauceOrg = (req, res, next) => {
+  try {
+    console.log(req.body);
+    const sauceObject = req.body;
+    SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id }) //A REVOIR AVEC STEPHANE 
+      .then(() => res.status(200).json({ message: 'sauce modifiée' }))
+  } catch (error) {
     console.error(error);
   }
-    // .catch(error => res.status(400).json({ error }));// attention changement image != garder l'image
+  // .catch(error => res.status(400).json({ error }));// attention changement image != garder l'image
+};
+
+
+  // const sauceObject = req.file ? // on vérifie si la modification concerne le body ou un nouveau fichier image
+  // {
+  //     ...JSON.parse(req.body.sauce),
+  //     imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+  // } : { ...req.body };
+  exports.modifySauce = (req, res, next) => {
+  let sauceObject = {};
+  if (req.file) {
+    sauceObject = {
+      ...JSON.parse(req.body.sauce),
+      imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    }
+    console.log(sauceObject);
+  } else {
+    sauceObject = { ...req.body };
+  }
+  // Je mets à jour la sauce modifiée
+  SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+    .then(() => res.status(200).json({ message: 'Sauce modifiée' }))
+    .catch(() => res.status(400).json({ error }))
 };
 
 exports.deleteSauce = (req, res, next) => { //pour supprimer un objet
@@ -56,19 +81,19 @@ exports.deleteSauce = (req, res, next) => { //pour supprimer un objet
 };
 
 exports.getOneSauce = (req, res, next) => { // le : dit a express que cette partie de la route est dynamique et donc j'y aurais accès dans l'objet req.params.id
-  try{
-  SauceObj.findOne({ _id: req.params.id }) //pour trouver un seul identifiant, un seul objet. Quand on clique sur un objet, on peut accéder à la page dédiée à cet objet. 
-    .then(sauce => res.status(200).json(sauce))
-  } catch (error){
+  try {
+    SauceObj.findOne({ _id: req.params.id }) //pour trouver un seul identifiant, un seul objet. Quand on clique sur un objet, on peut accéder à la page dédiée à cet objet. 
+      .then(sauce => res.status(200).json(sauce))
+  } catch (error) {
     console.log(error);
     // .catch(error => res.status(404).json({ error }));
   }
 };
 
 exports.getAllSauces = (req, res, next) => { //intercepte uniquement les req get avec ce middleware
-  try{
-  SauceObj.find()  // renvoie un tableau contenant tous les sauces dans notre base de données
-    .then(sauces => res.status(200).json(sauces))
+  try {
+    SauceObj.find()  // renvoie un tableau contenant tous les sauces dans notre base de données
+      .then(sauces => res.status(200).json(sauces))
   } catch (error) { //promise
     // .catch(error => res.status(400).json({ error }));
     console.error(error);
