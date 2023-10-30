@@ -1,13 +1,12 @@
-//importer Mongoose
+require('dotenv').config()
 const mongoose = require('mongoose');
-// importer express
 const express = require ('express');
-
-require('dotenv').config();
-
+const cors = require('cors');
 const path = require ('path');
-//importer mon schema
-//const Thing = require('./Thing');
+const rateLimit = require('express-rate-limit');
+const helmet = require("helmet");
+const mongo_sanitize = require('express-mongo-sanitize');
+const logger = require('./conf/winston_conf');
 //importer le router
 const sauceRoutes = require('./routes/sauce'); //déco
 const userRoutes = require('./routes/user');
