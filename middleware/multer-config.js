@@ -3,8 +3,7 @@ const fs = require('fs')
 
 const dir = `./${process.env.UPLOAD_DIRECTORY_NAME}`;
 
-// astuce du chef : crée le dossier de reception des images s'il n'existe pas
-// ça évite les déconvenues et c'est la frime
+//crée le dossier de reception des images s'il n'existe pas
 if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir);
 }

@@ -72,7 +72,9 @@ res.status(500).json({ error });
 
 
 exports.login = (req, res, next) => {
-    User.findOne({email: req.body.email})  //req.body.something = valeur donnée par le client
+
+    const hashedmail = cryptoJS.HmacSHA256(req.body.email, process.env.EMAIL_TOKEN).toString();
+    User.findOne({ email: hashedmail })
     .then (user => {
         if (user === null){
             res.status(401).json({message: 'Paire identifiant/mot de passe incorrecte'});
