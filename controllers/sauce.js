@@ -3,21 +3,18 @@ require('dotenv').config();
 const SauceObj = require('../models/Sauce');
 exports.createSauce = (req, res, next) => {
   try {
-    //console.log(req.body.sauce);
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id; //retire le champs id de la requête, sinon c'est mango qui va générer les id
     delete sauceObject._userId; //suppression du champ _userId envoyé par le client car on ne doit pas faire confiance. Il pourrait passer l'userId d'une autre personne.
-    //console.log('1');
+   
     const sauce = new SauceObj({
       ...sauceObject,
       userId: req.auth.userId,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` //req.protocol et req.get('host'), connectés par '://' et suivis de req.file.filename, pour reconstruire l'URL complète du fichier enregistré.
     });
-    // //console.log('2');
     sauce.save() //pour enregistrer l'instance que je viens de créer puis retourne un promise
       .then(() => { res.status(201).json({ message: 'Sauce enregistrée' }) })
       .catch(error => {
-        // //console.log(error);
         res.status(400).json({ error })
       })
   } catch (error) {
@@ -32,19 +29,18 @@ exports.createSauce = (req, res, next) => {
       ...JSON.parse(req.body.sauce),
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
     }
-    //console.log(sauceObject);
   } else {
     sauceObject = { ...req.body };
   }
 
-   // Récupérez la sauce actuelle depuis la base de données
+   // Je récupère la sauce depuis la base de données
    SauceObj.findOne({ _id: req.params.id })
    .then(sauce => {
      if (sauce.userId !== req.auth.userId) {
-       // Vérifiez si l'utilisateur actuel est bien le propriétaire de la sauce
+       // Ici, je vérifie si l'utilisateur qui veut modifier la sauce est bien celui qui l'a crée
        res.status(401).json({ message: 'Non autorisé' });
      } else {
-       // Si l'utilisateur est autorisé, mettez à jour la sauce
+       // Si l'utilisateur est le bon, la sauce se met à jour
        SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
          .then(() => res.status(200).json({ message: 'Sauce modifiée' }))
          .catch(error => res.status(400).json({ error }));
@@ -79,8 +75,6 @@ exports.getOneSauce = (req, res, next) => { // le : dit a express que cette part
     SauceObj.findOne({ _id: req.params.id }) //pour trouver un seul identifiant, un seul objet. Quand on clique sur un objet, on peut accéder à la page dédiée à cet objet. 
       .then(sauce => res.status(200).json(sauce))
   } catch (error) {
-    //console.log(error);
-    // .catch(error => res.status(404).json({ error }));
   }
 };
 
@@ -89,7 +83,6 @@ exports.getAllSauces = (req, res, next) => { //intercepte uniquement les req get
     SauceObj.find()  // renvoie un tableau contenant tous les sauces dans notre base de données
       .then(sauces => res.status(200).json(sauces))
   } catch (error) { //promise
-    // .catch(error => res.status(400).json({ error }));
     console.error(error);
   }
 };
