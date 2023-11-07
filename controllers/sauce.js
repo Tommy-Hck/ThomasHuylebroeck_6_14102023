@@ -60,7 +60,7 @@ exports.deleteSauce = (req, res, next) => { //pour supprimer un objet
         const filename = sauce.imageUrl.split('/images/')[1];  //Nous utilisons le fait de savoir que notre URL d'image contient un segment /images/ pour séparer le nom de fichier.
         fs.unlink(`images/${filename}`, () => {  //Utiliser ensuite la fonction unlink du package fs pour supprimer ce fichier, en lui passant le fichier à supprimer et le callback à exécuter une fois ce fichier supprimé.
           sauce.deleteOne({ _id: req.params.id })  //Dans le callback, nous implémentons la logique d'origine en supprimant le sauce de la base de données.
-            .then(() => { res.status(200).json({ message: 'Objet supprimé' }) })
+            .then(() => { res.status(200).json({ message: 'Sauce supprimée' }) })
             .catch(error => res.status(401).json({ error }));
         });
       }
@@ -70,7 +70,7 @@ exports.deleteSauce = (req, res, next) => { //pour supprimer un objet
     });
 };
 
-exports.getOneSauce = (req, res, next) => { // le : dit a express que cette partie de la route est dynamique et donc j'y aurais accès dans l'objet req.params.id
+exports.getOneSauce = (req, res, next) => { 
   try {
     SauceObj.findOne({ _id: req.params.id }) //pour trouver un seul identifiant, un seul objet. Quand on clique sur un objet, on peut accéder à la page dédiée à cet objet. 
       .then(sauce => res.status(200).json(sauce))
@@ -80,7 +80,7 @@ exports.getOneSauce = (req, res, next) => { // le : dit a express que cette part
 
 exports.getAllSauces = (req, res, next) => { //intercepte uniquement les req get avec ce middleware
   try {
-    SauceObj.find()  // renvoie un tableau contenant tous les sauces dans notre base de données
+    SauceObj.find()  // renvoie un tableau contenant toutes les sauces dans notre base de données
       .then(sauces => res.status(200).json(sauces))
   } catch (error) { //promise
     console.error(error);
