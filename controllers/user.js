@@ -22,22 +22,13 @@ exports.signup = (req, res, next) => {
     if (email_valid.validate(req.body.email) && schema.validate(req.body.password)) {
         // OWASP / RGPD : hashage de l'adresse mail
         const hashedmail = cryptoJS.HmacSHA256(req.body.email, process.env.EMAIL_TOKEN).toString();
-        console.log(hashedmail);
-        console.log(req.body.email);
         bcrypt.hash(req.body.password, Number(process.env.HASH_SALT))
             .then(hash => {
                 const user = new User({
                     email: hashedmail,
                     password: hash
                 });
-            //     user.save()
-            //         .then(() => res.status(201).json({ message: 'Utilisateur crée' }))
-            //         .catch(error => res.status(400).json({ error }));
-            // })
-            // .catch(error => {
-            //     console.log(error);
-            //     res.status(500).json({ error });
-            //     });
+
             user.save()
 .then(() => {
     console.log("Utilisateur enregistré avec succès.");
@@ -62,7 +53,6 @@ res.status(500).json({ error });
 }
 //     bcrypt.hash(req.body.password, 10) //hacher le pwd, req.body.pwd pour récup le pwd du user et le salt: 10 tours de l'algo pour sécure le pwd. Plus c'est bien mais prend plus de temps
 //         .then(hash => {
-//             console.log("Mot de passe haché avec succès.");
 //             const user = new User({
 //                 email: req.body.email, //mail du corps de la requête
 //                 password: hash
