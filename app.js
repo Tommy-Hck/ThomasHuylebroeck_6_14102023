@@ -30,36 +30,24 @@ mongoose.connect(process.env.DB_LINK,
   .catch(() => console.log('Connexion à MongoDB échouée'));
 
 
-//créer une application express
+
 const app = express();
 
-// app.use((req, res, next) => {  //Le CORS définit comment les serveurs et les navigateurs interagissent, en spécifiant quelles ressources peuvent être demandées de manière légitime.
-//     res.setHeader('Access-Control-Allow-Origin', '*'); //accéder à notre API depuis n'importe quelle origine donc tout le monde ( '*' )
-//     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'); //'ajouter les headers mentionnés aux requêtes envoyées vers notre API (Origin , X-Requested-With , etc.) ;
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS'); //envoyer des requêtes avec les méthodes mentionnées ( GET ,POST , etc.).
-//     next();
-//   });
+app.use(cors()) 
 
-app.use(cors()) // fait la même chose que ce que j'ai fait au dessus : authorise toutes les requêtes CORS (mieux en dev)
-
-app.use(express.json()); //Express prend toutes les requêtes qui ont comme Content-Type  application/json  et met à disposition leur  body  directement sur l'objet req
+app.use(express.json()); 
 
 app.use(limiter);
 
-// OWASP : empecher l'injection de caractères tout pourris
 app.use(mongo_sanitize());
 
-// OWASP - protection des entêtes
 app.use(helmet({ crossOriginResourcePolicy: { policy: "same-site" } }));
 
 //                                                              ----------LES ROUTES---------
 
-//déco
-app.use('/api/sauces', sauceRoutes); // ici, on importe sauceRoutes pour récup les routes app.get etc. du fichier sauce pour éviter de surcharger app.js. C'est module.exports = router qui permet de l'envoyer
+
+app.use('/api/sauces', sauceRoutes); 
 app.use('/api/auth', userRoutes);
-// app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(`/${process.env.FRONT_IMAGES_DIRECTORY}`, express.static(path.join(__dirname, process.env.UPLOAD_DIRECTORY_NAME )));
 
-
-//exporter l'application pour y accéder depuis les autres fichiers du projet
 module.exports = app;
