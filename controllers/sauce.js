@@ -37,19 +37,31 @@ exports.modifySauce = (req, res, next) => {
   SauceObj.findOne({ _id: req.params.id })
     .then(sauce => {
       if (sauce.userId !== req.auth.userId) {
-        // Ici, je vérifie si l'utilisateur qui veut modifier la sauce est bien celui qui l'a crée
+        // Ici, je vérifie si l'utilisateur qui veut modifier la sauce est bien celui qui l'a créée
         res.status(401).json({ message: 'Non autorisé' });
       } else {
-        // Si l'utilisateur est le bon, la sauce se met à jour
-        SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Sauce modifiée' }))
-          .catch(error => res.status(400).json({ error }));
+        if (req.file) {
+          // Supprimer l'ancienne image si une nouvelle image est fournie
+          const filename = sauce.imageUrl.split('/images/')[1];
+          fs.unlink(`images/${filename}`, () => {
+            // Après avoir supprimé l'ancienne image, mettez à jour la sauce avec la nouvelle image
+            SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+              .then(() => res.status(200).json({ message: 'Sauce modifiée' }))
+              .catch(error => res.status(400).json({ error }));
+          });
+        } else {
+          // Si aucune nouvelle image n'est fournie, mettez à jour la sauce sans supprimer l'ancienne image
+          SauceObj.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+            .then(() => res.status(200).json({ message: 'Sauce modifiée' }))
+            .catch(error => res.status(400).json({ error }));
+        }
       }
     })
     .catch(error => {
       res.status(500).json({ error });
     });
 };
+
 
 exports.deleteSauce = (req, res, next) => { //pour supprimer un objet
   SauceObj.findOne({ _id: req.params.id })  //utiliser l'ID que nous recevons comme paramètre pour accéder au sauce correspondant dans la base de données.
