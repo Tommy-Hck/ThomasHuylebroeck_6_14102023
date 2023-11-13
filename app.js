@@ -48,6 +48,6 @@ app.use(helmet({ crossOriginResourcePolicy: { policy: "same-site" } }));
 
 app.use('/api/sauces', sauceRoutes); 
 app.use('/api/auth', userRoutes);
-app.use(`/${process.env.FRONT_IMAGES_DIRECTORY}`, express.static(path.join(__dirname, process.env.UPLOAD_DIRECTORY_NAME )));
+app.use(`/images`, express.static(path.join(__dirname, 'images')));
 
 module.exports = app;

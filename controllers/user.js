@@ -30,7 +30,6 @@ exports.signup = (req, res, next) => {
 
             user.save()
 .then(() => {
-    console.log("Utilisateur enregistré avec succès.");
     res.status(201).json({ message: 'Utilisateur créé' });
 })
 .catch(error => {
